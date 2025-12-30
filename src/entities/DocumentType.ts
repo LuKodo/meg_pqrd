@@ -1,0 +1,1 @@
+export const documentType = ["CC", "CE", "CN", "MS", "NI", "PA", "PE", "PT", "RC", "SC", "TI", "AS"]

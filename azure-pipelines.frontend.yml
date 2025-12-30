@@ -1,0 +1,120 @@
+pool:
+  name: Default
+
+trigger:
+  branches:
+    include:
+      - staging
+      - main
+
+# Variables: selecciona el grupo según la rama
+variables:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    - group: meg-pqrd-staging
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - group: meg-pqrd-production
+
+  - name: tag
+    value: '$(Build.BuildId)'
+
+stages:
+- stage: BuildAndDeploy
+  displayName: Build and Upload Frontend to OCI
+  jobs:
+  - job: BuildAndUpload
+    displayName: Build and Upload to OCI Object Storage
+    steps:
+    - checkout: self
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '21.x'
+      displayName: 'Instala Node.js'
+
+    - script: |
+        npm install -g pnpm
+        pnpm install
+      displayName: 'Instala dependencias con pnpm'
+
+    # Obtiene secretos de AWS y VITE_URI_API desde OCI Vault
+    - script: |
+        set -e
+        set -o pipefail
+
+        get_secret() {
+          local name=$1
+          local ocid=$2
+          if [ -z "$ocid" ]; then
+            echo "[ERROR] OCID para $name está vacío. Abortando." >&2
+            exit 1
+          fi
+          echo "Obteniendo secret $name ($ocid) ..."
+          local value
+          value=$(timeout 30s oci secrets secret-bundle get --secret-id "$ocid" --query "data.\"secret-bundle-content\".content" --raw-output | base64 -d) || {
+            echo "[ERROR] No se pudo obtener el secret $name ($ocid) o timeout." >&2
+            exit 1
+          }
+          if [ -z "$value" ]; then
+            echo "[ERROR] El valor del secret $name está vacío. Abortando." >&2
+            exit 1
+          fi
+          echo "Secret $name obtenido."
+          echo "##vso[task.setvariable variable=$name]$value"
+        }
+
+        get_secret AWS_ACCESS_KEY_ID $OCID_AWS_ACCESS_KEY_ID
+        get_secret AWS_SECRET_ACCESS_KEY $OCID_AWS_SECRET_ACCESS_KEY
+        get_secret AWS_DEFAULT_REGION $OCID_AWS_DEFAULT_REGION
+        get_secret CLOUDFRONT_DISTRIBUTION_ID $OCID_CLOUDFRONT_DISTRIBUTION_ID
+        get_secret VITE_URI_API $OCID_VITE_URI_API
+        get_secret AWS_BUCKET_NAME $OCID_AWS_BUCKET_NAME
+        
+      displayName: 'Obtiene secretos de AWS y VITE_URI_API desde OCI Vault'
+      env:
+        OCID_AWS_ACCESS_KEY_ID: $(OCID_AWS_ACCESS_KEY_ID)
+        OCID_AWS_SECRET_ACCESS_KEY: $(OCID_AWS_SECRET_ACCESS_KEY)
+        OCID_AWS_DEFAULT_REGION: $(OCID_AWS_DEFAULT_REGION)
+        OCID_CLOUDFRONT_DISTRIBUTION_ID: $(OCID_CLOUDFRONT_DISTRIBUTION_ID)
+
+    - script: |
+        echo "Usando VITE_URI_API=$VITE_URI_API para el build"
+        export VITE_URI_API="$VITE_URI_API"
+        pnpm run build
+      displayName: 'Build Vite App'
+      env:
+        VITE_URI_API: $(VITE_URI_API)
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/dist'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/dist'
+      displayName: 'Prepara archivos en el directorio de artefactos'
+
+    # AWS CLI ya viene instalado en ubuntu-latest, así que no es necesario instalarlo
+
+    # Configura credenciales AWS
+    - script: |
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set default.region $AWS_DEFAULT_REGION
+      displayName: 'Configura credenciales AWS'
+      env:
+        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+    # Sube archivos a S3 (en la raíz, no dentro de /dist)
+    - script: |
+        aws s3 sync $(Build.ArtifactStagingDirectory)/dist s3://$(AWS_BUCKET_NAME)/dist --delete
+      displayName: 'Sube archivos estáticos a S3'
+
+    # Invalida la caché de CloudFront tras cada despliegue
+    - script: |
+        aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+      displayName: 'Invalida la caché de CloudFront tras despliegue'
+      env:
+        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+        AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+        CLOUDFRONT_DISTRIBUTION_ID: $(CLOUDFRONT_DISTRIBUTION_ID)
