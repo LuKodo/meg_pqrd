@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { iModel } from '@/entities';
 import { ModelRepository } from '@/features/shared/repositories';
-import { httpClient } from '@/http';
+import { useMemo } from 'react';
 
 export function useModels() {
-  const repository = new ModelRepository(httpClient);
+  const repository = useMemo(() => new ModelRepository(), []);
 
   return useQuery<iModel[], Error>({
     queryKey: ['models'],

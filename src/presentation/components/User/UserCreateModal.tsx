@@ -1,5 +1,4 @@
 import { FC, Fragment, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
 import { Toast } from "../Common/ToastComponent.tsx";
 
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -11,6 +10,7 @@ import { iUser } from "@/entities/User.ts";
 import { Modal, ModalBody } from "@/features/shared/components/Modal.tsx";
 import { Col, Row } from "@/features/shared/components/Grid.tsx";
 import { Button } from "@/features/shared/components/Button.tsx";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -30,19 +30,19 @@ export const ModalUserCreate: FC<modalProps> = ({ show, handleClose }) => {
 	} = useForm<iUser>();
 
 	useEffect(() => {
-		instance
+		api
 			.get(`headquarter?page=${1}&pageSize=${999999}`)
 			.then((response: any) => {
 				setHeadquarters(response.data);
 			});
 
-		instance.get(`roles?page=${1}&pageSize=${999999}`).then((response: any) => {
+		api.get(`roles?page=${1}&pageSize=${999999}`).then((response: any) => {
 			setRoles(response.data);
 		});
 	}, []);
 
 	const onSubmit: SubmitHandler<iUser> = (data) => {
-		instance
+		api
 			.post("user", { json: data })
 			.then(() => {
 				reset();

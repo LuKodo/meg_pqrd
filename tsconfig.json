@@ -1,92 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "*"
-      ],
-      "@features/*": [
-        "features/*"
-      ],
-      "@shared/*": [
-        "features/shared/*"
-      ],
-      "@utils/*": [
-        "utils/*"
-      ],
-      "@routes/*": [
-        "routes/*"
-      ],
-      "@svg/*": [
-        "svg/*"
-      ],
-      "@application": [
-        "application"
-      ],
-      "@hooks": [
-        "application/hooks"
-      ],
-      "@services": [
-        "application/services"
-      ],
-      "@context": [
-        "features/shared/context"
-      ],
-      "@domain": [
-        "features/shared/models"
-      ],
-      "@entities": [
-        "features/shared/models"
-      ],
-      "@interfaces": [
-        "domain/interfaces"
-      ],
-      "@infrastructure": [
-        "features/shared"
-      ],
-      "@repositories": [
-        "features/shared/repositories"
-      ],
-      "@presentation": [
-        "presentation"
-      ],
-      "@pages": [
-        "presentation/pages"
-      ],
-      "@assets": [
-        "presentation/assets"
-      ],
-      "@store": [
-        "presentation/store"
-      ],
-      "@components": [
-        "presentation/components"
+        "./src/*"
       ]
     },
-    "target": "es2022",
-    "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "module": "es2022",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src"
-  ],
+  "files": [],
   "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
     {
       "path": "./tsconfig.node.json"
     }

@@ -1,8 +1,6 @@
 import { requestStatePQRSMachine, StatusPQRS, } from "@/utils";
-
 import type { iReasonsRequest, iRequestView } from "@/entities";
-import { type FC, useEffect, useState } from "react";
-import { httpClient } from "@/http";
+import { type FC, useEffect, useState, useMemo } from "react";
 import { ReasonStatusChangesRepository } from "@/features/shared/repositories";
 import { RequestActions } from "@/services";
 import { Modal, ModalBody, ModalHeader, ModalTitle } from "@/features/shared/components/Modal";
@@ -18,8 +16,6 @@ interface CancelRequestModalProps {
 	search?: () => void;
 }
 
-const repository = new ReasonStatusChangesRepository(httpClient);
-
 export const CancelRequestModal: FC<CancelRequestModalProps> = ({
 	show,
 	handleClose,
@@ -28,7 +24,8 @@ export const CancelRequestModal: FC<CancelRequestModalProps> = ({
 }) => {
 	const [data, setData] = useState<iReasonsRequest[]>();
 	const [observations, setObservations] = useState<string>("");
-	const requestActions = new RequestActions();
+	const repository = useMemo(() => new ReasonStatusChangesRepository(), []);
+	const requestActions = useMemo(() => new RequestActions(), []);
 
 	const updateReason = async () => {
 		if (!request?.id || !username || !observations) return;
@@ -49,17 +46,17 @@ export const CancelRequestModal: FC<CancelRequestModalProps> = ({
 		repository.getByStatus(requestStatePQRSMachine.getStateId(StatusPQRS.Anulado)).then((response) => {
 			setData(response);
 		});
-	}, []);
+	}, [repository]);
 
 	return (
-		<Modal>
-			<ModalHeader>
+		<Modal show={show} onClose={handleClose}>
+			<ModalHeader onClose={handleClose}>
 				<ModalTitle>Seleccione un motivo de anulación</ModalTitle>
 			</ModalHeader>
 			<ModalBody>
 				<div>
 					<label>Motivo de Anulación</label>
-					<select onChange={(e) => setObservations(String(e.target.value))}>
+					<select onChange={(e) => setObservations(String(e.target.value))} className="select">
 						<option value="" />
 						{data?.map((DT: iReasonsRequest) => {
 							return (

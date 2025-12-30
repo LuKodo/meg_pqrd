@@ -1,5 +1,5 @@
-import { iRequest, iRequestView } from "./Request";
-import { iUser } from "./User";
+import { type iRequest, type iRequestView } from "./Request";
+import { type iUser } from "./User";
 
 export interface Observation {
     id: number;

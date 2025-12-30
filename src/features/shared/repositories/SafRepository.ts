@@ -1,4 +1,4 @@
-import { iHeadquarter } from "@/entities";
+import type { iHeadquarter } from "@/entities";
 import { api } from "@/http";
 
 export class SafRepository {

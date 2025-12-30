@@ -1,9 +1,8 @@
 // FileUpload
-import { ChangeEvent, Dispatch, SetStateAction, useRef } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useRef, useMemo } from "react";
 import { read, utils } from "xlsx";
 import { Affiliate, AffiliateDoc, itemExcelPQRS } from "@/entities";
 import { AffiliateHttpRepository } from "@/features/shared/repositories";
-import { httpClient } from "@/http";
 import { Card, CardBody } from "@/features/shared/components/Card";
 import Swal from "sweetalert2";
 
@@ -14,7 +13,7 @@ interface FileUploadProps {
 
 export const FileUploadPQRS = ({ setData, setLoading }: FileUploadProps) => {
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
-	const afiliateRepository = new AffiliateHttpRepository(httpClient);
+	const afiliateRepository = useMemo(() => new AffiliateHttpRepository(), []);
 
 	const handleClick = () => {
 		fileInputRef.current?.click();

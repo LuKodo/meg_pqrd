@@ -5,7 +5,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { instance } from "@/utils";
+import { api } from "@/http";
 import type { iHeadquarter } from "@/entities";
 
 type RegionProps = {
@@ -24,7 +24,7 @@ const SAFCleanInput: FC<RegionProps> = ({
 	const [regions, setRegions] = useState<iHeadquarter[]>([]);
 
 	useEffect(() => {
-		instance
+		api
 			.get("headquarter?page=1&pageSize=10000")
 			.then((response: any) => {
 				response.data.data.map((city: iHeadquarter) => {

@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
 import { Toast } from "../Common/ToastComponent.tsx";
 import { iUser } from "@/entities/User.ts";
 import { PaginatedData } from "@/entities/PaginateData.ts";
@@ -8,6 +7,7 @@ import { iRole } from "@/entities/Role.ts";
 import { Modal, ModalBody, ModalHeader, ModalTitle } from "@/features/shared/components/Modal.tsx";
 import { Col, Row } from "@/features/shared/components/Grid.tsx";
 import { Button } from "@/features/shared/components/Button.tsx";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -41,13 +41,13 @@ export const ModalUserEdit: FC<modalProps> = ({
 	const [roles, setRoles] = useState<PaginatedData<iRole>>();
 
 	useEffect(() => {
-		instance
+		api
 			.get(`headquarter?page=${1}&pageSize=${999999}`)
 			.then((response: any) => {
 				setHeadquarters(response.data);
 			});
 
-		instance.get(`roles?page=${1}&pageSize=${999999}`).then((response: any) => {
+		api.get(`roles?page=${1}&pageSize=${999999}`).then((response: any) => {
 			setRoles(response.data);
 		});
 	}, []);
@@ -57,9 +57,9 @@ export const ModalUserEdit: FC<modalProps> = ({
 	}, [selected]);
 
 	const saveToDB = async () => {
-		await instance
+		await api
 			.put(`user/${userSelected?.id}`, { json: userSelected })
-			.then((response: any) => {
+			.then(() => {
 				handleClose();
 				Toast.fire({
 					title: "Guardado exitoso",

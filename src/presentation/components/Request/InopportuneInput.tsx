@@ -1,6 +1,5 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState, useMemo } from "react";
 import { iReasonsRequest } from "@/entities";
-import { httpClient } from "@/http";
 import { ReasonStatusChangesRepository } from "@/features/shared/repositories";
 import { requestStatePQRSMachine, StatusPQRS } from "@/utils";
 
@@ -9,22 +8,21 @@ interface InopportuneInputProps {
 	setValue: Dispatch<SetStateAction<string | undefined>>;
 }
 
-const repository = new ReasonStatusChangesRepository(httpClient);
 export const InopportuneInput: FC<InopportuneInputProps> = ({
 	setValue,
 	value,
 }) => {
 	const [inopportunes, setInopportune] = useState<iReasonsRequest[]>();
-
-	const fetchData = async () => {
-		const data = await repository.getByStatus(requestStatePQRSMachine.getStateId(StatusPQRS.Digitado));
-
-		setInopportune(data);
-	};
+	const repository = useMemo(() => new ReasonStatusChangesRepository(), []);
 
 	useEffect(() => {
+		const fetchData = async () => {
+			const data = await repository.getByStatus(requestStatePQRSMachine.getStateId(StatusPQRS.Digitado));
+			setInopportune(data);
+		};
+
 		fetchData();
-	}, []);
+	}, [repository]);
 
 	return (
 		<>

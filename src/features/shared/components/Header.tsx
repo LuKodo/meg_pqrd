@@ -1,5 +1,11 @@
 import type { FC } from "react";
-import { Card } from "./Card";
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { IconPower } from "@/svg";
+import { useSessionManager } from "../hooks";
+import { useAuthStore } from "@/features/auth/auth.store";
+import Swal from "sweetalert2";
 
 interface HeaderProps {
   title: string;
@@ -12,27 +18,55 @@ export const Header: FC<HeaderProps> = ({
   subItem,
   button,
 }) => {
+  const logout = useAuthStore((e) => e.logout);
+  const { getUsername } = useSessionManager();
+
+  const logoutHandler = () => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        logout();
+      }
+    })
+  }
+
   return (
-    <Card className="mb-4 p-3">
-      <div className="grid grid-cols-2 justify-between">
-        <div className="flex justify-start items-center text-sm text-gray-500 font-medium">
-          <button type="button" aria-label="Home">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 7.609c.352 0 .69.122.96.343l.111.1 6.25 6.25v.001a1.5 1.5 0 0 1 .445 1.071v7.5a.89.89 0 0 1-.891.891H9.125a.89.89 0 0 1-.89-.89v-7.5l.006-.149a1.5 1.5 0 0 1 .337-.813l.1-.11 6.25-6.25c.285-.285.67-.444 1.072-.444Zm5.984 7.876L16 9.5l-5.984 5.985v6.499h11.968z" fill="#475569" stroke="#475569" strokeWidth=".094" />
-            </svg>
-          </button>
-          <a href="#">{title}</a>
-          {subItem && <>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="m14.413 10.663-6.25 6.25a.939.939 0 1 1-1.328-1.328L12.42 10 6.836 4.413a.939.939 0 1 1 1.328-1.328l6.25 6.25a.94.94 0 0 1-.001 1.328" fill="#CBD5E1" />
-            </svg>
-            <a href="#" className="text-indigo-500">{subItem}</a>
-          </>}
-        </div>
-        <div className="flex justify-end items-center text-sm text-gray-500 font-medium">
+    <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+      <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+        <SidebarTrigger className="-ml-1" />
+        <Separator
+          orientation="vertical"
+          className="mx-2 data-[orientation=vertical]:h-4"
+        />
+        <h1 className="text-base font-medium">{title}</h1>
+        {subItem && (
+          <>
+            <Separator
+              orientation="vertical"
+              className="mx-2 data-[orientation=vertical]:h-4"
+            />
+            <h2 className="text-sm font-medium">{subItem}</h2>
+          </>
+        )}
+
+        <div className="ml-auto flex items-center gap-2">
           {button && <>{button}</>}
+          <Button className="hidden sm:flex border border-gray-200 hover:border-gray-300 hover:bg-gray-50 bg-transparent rounded-2xl text-gray-800 font-medium" onClick={logoutHandler}>
+            <>
+              {getUsername()}
+              <IconPower />
+            </>
+          </Button>
         </div>
       </div>
-    </Card>
+    </header>
   );
 };

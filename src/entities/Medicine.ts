@@ -1,4 +1,4 @@
-import { Balance } from "@/entities/Balance";
+import { type Balance } from "@/entities/Balance";
 
 export interface iMedicine {
   id?: number;

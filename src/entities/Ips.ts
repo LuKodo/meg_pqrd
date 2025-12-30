@@ -1,4 +1,4 @@
-import { iCity } from "./Location.ts";
+import { type iCity } from "./Location.ts";
 
 export interface iDelegate {
   id: number;

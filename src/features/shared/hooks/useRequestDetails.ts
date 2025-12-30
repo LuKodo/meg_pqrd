@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { iRequestView } from '@/entities';
 import { RequestApiRepository } from '@/features/shared/repositories';
-import { httpClient } from '@/http';
 
 export function useRequestDetails(requestId: string | undefined) {
   const [loading, setLoading] = useState<boolean>(true);
@@ -9,6 +8,7 @@ export function useRequestDetails(requestId: string | undefined) {
   const [request, setRequest] = useState<iRequestView | null>(null);
   const [isPQR, setIsPQR] = useState<boolean>(false);
 
+  const repository = useMemo(() => new RequestApiRepository(), []);
 
   useEffect(() => {
     if (!requestId) {
@@ -19,7 +19,6 @@ export function useRequestDetails(requestId: string | undefined) {
     const fetchRequest = async () => {
       try {
         setLoading(true);
-        const repository = new RequestApiRepository(httpClient);
 
         const response = await repository.getDetails(requestId);
         setIsPQR(response.channel.toLocaleUpperCase() === 'PQRS');
@@ -34,7 +33,7 @@ export function useRequestDetails(requestId: string | undefined) {
     };
 
     fetchRequest();
-  }, [requestId]);
+  }, [requestId, repository]);
 
   return { request, loading, error, setRequest, isPQR };
 }

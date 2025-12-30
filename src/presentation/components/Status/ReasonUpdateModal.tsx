@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
 
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 import { iReason } from "@/entities/Reason";
@@ -8,6 +7,7 @@ import { iStatus } from "@/entities/Status";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -24,7 +24,7 @@ export const ModalUpdateReason: FC<modalProps> = ({
 	const [itemSelected, setItemSelected] = useState<iReason | undefined>();
 
 	useEffect(() => {
-		instance.get(`status?page=${1}&pageSize=${999999}`).then(async (response) => {
+		api.get(`status?page=${1}&pageSize=${999999}`).then(async (response) => {
 			setStatuses(await response.json());
 		});
 	}, []);
@@ -34,8 +34,7 @@ export const ModalUpdateReason: FC<modalProps> = ({
 	}, [selected]);
 
 	const onSubmit = () => {
-		instance
-			.put("ReasonsRequest", { json: itemSelected })
+		api.put("ReasonsRequest", { json: itemSelected })
 			.then(() => {
 				handleClose();
 				Toast.fire({

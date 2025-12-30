@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from "react";
 import { iIPS } from "@/entities/Ips";
-import { instance } from "@/utils/axios.ts";
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -24,7 +24,7 @@ export const ModalUpdateIPS: FC<modalProps> = ({
 	}, [selected]);
 
 	const onSubmit = async () => {
-		await instance
+		await api
 			.put("ips", { json: IPSSelected })
 			.then(() => {
 				handleClose();

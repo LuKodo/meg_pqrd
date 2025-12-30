@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { iIPS } from "@/entities/Ips";
-import { instance } from "@/utils/axios.ts";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -24,7 +24,7 @@ export const ModalCreateIPS: FC<modalProps> = ({ show, handleClose }) => {
 	}>();
 
 	const onSubmit: SubmitHandler<iIPS> = (data) => {
-		instance
+		api
 			.post("ips", { json: data })
 			.then(() => {
 				reset();

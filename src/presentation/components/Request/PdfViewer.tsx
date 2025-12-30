@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ModalBody, ModalFooter, Modal } from '@/features/shared/components/Modal.tsx';
-
 import { Loading } from '../Loading.tsx';
 import { iRequestView } from '@/entities/Request.ts';
-import { httpClient } from '@/http/HttpClient.ts';
+import { api } from '@/http';
 
 interface PdfViewerProps {
     fileUrl: string;
@@ -12,7 +11,7 @@ interface PdfViewerProps {
     request: iRequestView;
 }
 
-const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, onClose, show, request }) => {
+const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, onClose, show }) => {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -21,11 +20,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, onClose, show, request }
         const downloadPdf = async () => {
             try {
                 setLoading(true);
-                const response = await httpClient.post(`files/download?filename=${fileUrl}.pdf&type=formulas`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                });
+                const response = await api.post(`files/download?filename=${fileUrl}.pdf&type=formulas`);
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 setPdfUrl(url);
@@ -36,8 +31,10 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ fileUrl, onClose, show, request }
             }
         };
 
-        downloadPdf();
-    }, [fileUrl]);
+        if (show && fileUrl) {
+            downloadPdf();
+        }
+    }, [fileUrl, show]);
 
     const handleClose = () => {
         setPdfUrl(null);

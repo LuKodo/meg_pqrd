@@ -7,11 +7,10 @@ const Home = lazy(() => import("../features/home/index.tsx"));
 const GestorPQRD = lazy(() => import("../features/pqrd/index.tsx"));
 const GestorPQRDDetail = lazy(() => import("../features/pqrd/details.tsx"));
 const ManagePQRD = lazy(() => import("../features/manage_pqrs/ManagePage.tsx"));
-const Historic = lazy(() => import("../presentation/pages/Request/Historic.tsx"));
-const Details = lazy(() => import("../presentation/pages/Request/Details.tsx"));
+const Historic = lazy(() => import("../features/request/Historic.tsx"));
+const Details = lazy(() => import("../features/request/Details.tsx"));
 const CreateRequestPQRS = lazy(() => import("../features/request/Single.tsx"));
 const CreateRequestMasivePQRS = lazy(() => import("../features/request/Masive.tsx"));
-const Inventory = lazy(() => import("../presentation/pages/Request/Inventory.tsx"));
 
 export const privateRoutes = (
     <>
@@ -65,15 +64,7 @@ export const privateRoutes = (
                 </Layout>
             </PrivateRoute>
         </Route>
-
-        <Route path="/manage/inventory-add">
-            <PrivateRoute>
-                <Layout>
-                    <Inventory />
-                </Layout>
-            </PrivateRoute>
-        </Route>
-
+        
         <Route path="/manage/pqrs">
             <PrivateRoute>
                 <Layout>

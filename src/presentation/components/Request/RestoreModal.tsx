@@ -2,14 +2,13 @@ import { requestStatePQRSMachine, StatusPQRS } from "@/utils";
 
 import type { iReasonsRequest, iRequestView } from "@/entities";
 import { type FC, useEffect, useState } from "react";
-import { httpClient } from "@/http";
 import { ReasonStatusChangesRepository } from "@/features/shared/repositories";
 import { RequestActions } from "@/services";
 import { Modal, ModalBody, ModalHeader, ModalTitle } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
 
-const repository = new ReasonStatusChangesRepository(httpClient);
+const repository = new ReasonStatusChangesRepository();
 
 interface RestoreModalProps {
     request: iRequestView | null;
@@ -50,8 +49,8 @@ export const RestoreModal: FC<RestoreModalProps> = ({
     }, []);
 
     return (
-        <Modal>
-            <ModalHeader>
+        <Modal show={show} onClose={handleClose}>
+            <ModalHeader onClose={handleClose}>
                 <ModalTitle>Seleccione un motivo de Reintegro</ModalTitle>
             </ModalHeader>
             <ModalBody>

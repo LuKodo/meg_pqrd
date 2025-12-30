@@ -1,8 +1,7 @@
-import { type FC, useEffect, useState } from "react";
+import { type FC, useEffect, useState, useMemo } from "react";
 import { InopportuneInput } from "./InopportuneInput.tsx";
 import type { iRequestView } from "@/entities";
 import type { iModel } from "@/entities";
-import { httpClient } from "@/http";
 import { ModelRepository } from "@/features/shared/repositories";
 import { Alert } from "@/features/shared/components/Alert.tsx";
 import { DateTime } from "luxon";
@@ -44,7 +43,7 @@ export const PreApprove: FC<ConfirmTypingProps> = ({
 	const [auth_number, setAuthNumber] = useState<string>("");
 	const [model, setModel] = useState<number>(0);
 	const [models, setModels] = useState<iModel[]>();
-	const modelRepository = new ModelRepository(httpClient);
+	const modelRepository = useMemo(() => new ModelRepository(), []);
 
 	useEffect(() => {
 		modelRepository.getAll().then((res) => {
@@ -55,7 +54,7 @@ export const PreApprove: FC<ConfirmTypingProps> = ({
 		setAuthNumber("");
 		setErrores([]);
 		setModel(0);
-	}, []);
+	}, [modelRepository]);
 
 	const close = () => {
 		setObservations("");
@@ -93,14 +92,14 @@ export const PreApprove: FC<ConfirmTypingProps> = ({
 		handleErrors();
 
 		if (request && model && auth_number) {
-
+			// Implementation of submission if needed, currently empty in original
 		}
 	};
 
 	return (
 		<form>
-			<Modal>
-				<ModalHeader>
+			<Modal show={show} onClose={close}>
+				<ModalHeader onClose={close}>
 					<ModalTitle>Pre Aprobar</ModalTitle>
 					{!chance && (
 						<Badge>Inoportuno</Badge>
@@ -109,13 +108,14 @@ export const PreApprove: FC<ConfirmTypingProps> = ({
 				<ModalBody>
 					<div>
 						<label>Fecha</label>
-						<input disabled value={DateTime.now().toFormat("yyyy-MM-dd")} />
+						<input disabled value={DateTime.now().toFormat("yyyy-MM-dd")} className="form-control" />
 					</div>
 					<div className="mt-3">
 						<label>Autorización</label>
 						<input
 							value={auth_number}
 							onChange={(e) => setAuthNumber(e.target.value)}
+							className="form-control"
 						/>
 						{
 							errores.find((error) => error.field === "auth_number")?.visible && ErrorInput(errores.find((error) => error.field === "auth_number")?.message ?? "")
@@ -127,6 +127,7 @@ export const PreApprove: FC<ConfirmTypingProps> = ({
 						<select
 							onChange={(e) => setModel(Number(e.target.value))}
 							value={model}
+							className="select"
 						>
 							<option value="0" />
 							{models?.map((DT: iModel) => {
@@ -149,6 +150,7 @@ export const PreApprove: FC<ConfirmTypingProps> = ({
 								<textarea
 									value={observations ? observations : ""}
 									onChange={(e) => setObservations(e.target.value)}
+									className="textarea"
 								/>
 							</>
 						) : (

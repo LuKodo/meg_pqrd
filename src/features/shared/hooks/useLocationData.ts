@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { iDepartment, iCity } from '@/entities';
 import { LocationRepository } from '@/features/shared/repositories';
-import { httpClient } from '@/http';
 
 export function useLocationData() {
   const [departments, setDepartments] = useState<iDepartment[]>([]);
   const [cities, setCities] = useState<iCity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const repository = new LocationRepository(httpClient);
+  const repository = useMemo(() => new LocationRepository(), []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +27,7 @@ export function useLocationData() {
     };
 
     fetchData();
-  }, []);
+  }, [repository]);
 
   const getCitiesByDepartment = async (departmentId: number) => {
     try {

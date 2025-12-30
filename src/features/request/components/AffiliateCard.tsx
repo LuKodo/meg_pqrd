@@ -1,10 +1,9 @@
-import { type FC, useEffect, useState } from "react";
+import { type FC, useEffect, useState, useMemo } from "react";
 import type { FormEvent } from "react";
 import { Affiliate } from "@/entities/Affiliate";
 import { documentType } from "@/entities/DocumentType";
 import { Tooltip } from "../../../presentation/components/Common/TooltipComponent.tsx";
 import { AffiliateHttpRepository } from "@/features/shared/repositories";
-import { httpClient } from "@/http";
 import { Card, CardBody } from "@/features/shared/components/Card.tsx";
 import { Button } from "@/features/shared/components/Button.tsx";
 import { toast } from "sonner";
@@ -22,7 +21,7 @@ export const AffiliateCard: FC<AffiliateComponentProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activeSearch, setActiveSearch] = useState<boolean>(true);
-  const repository = new AffiliateHttpRepository(httpClient);
+  const repository = useMemo(() => new AffiliateHttpRepository(), []);
 
   useEffect(() => {
     setAffiliate({

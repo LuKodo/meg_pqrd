@@ -1,4 +1,4 @@
-import { iCity, iDepartment } from "@/entities";
+import { type iCity, type iDepartment } from "@/entities";
 import { api } from "@/http";
 
 export class LocationRepository {

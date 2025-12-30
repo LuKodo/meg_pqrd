@@ -1,5 +1,4 @@
 import type { Filter } from "@/entities";
-import { DataTableFilterMeta, DataTableFilterMetaData } from "primereact/datatable";
 
 export const filters = (): Filter[] => [
 	{
@@ -206,10 +205,10 @@ export interface FilterDto {
 	operator: string;
 }
 
-export function transformFilters(filters: DataTableFilterMeta): BackendFilter[] {
+export function transformFilters(filters: any): BackendFilter[] {
 	let backendFilters: BackendFilter[] = [];
 	for (const key in filters) {
-		const filter = filters[key] as DataTableFilterMetaData;
+		const filter = filters[key] as any;
 
 		if (!filter.value) {
 			continue;

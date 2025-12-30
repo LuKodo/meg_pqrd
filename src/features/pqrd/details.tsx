@@ -1,16 +1,16 @@
 import { useParams } from "wouter";
 import { Header } from "../shared/components/Header";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import { formatDocument, jwtSign } from "@/utils";
 import { Show } from "../shared/components/Show";
 import { httpPQRD } from "@/http/PQRD";
 import { iPQRD, iRecord } from "./pqrd.model";
-import { IconBarcode, IconMail, IconPhone, IconUser } from "@/svg";
 import { formatPQRDDate, formatPQRDTime, listActivitiesByPQRD } from "./pqrd.presenter";
-import { Card, CardBody } from "../shared/components/Card";
 import { Button } from "../shared/components/Button";
 import { CreateActivityModal } from "./components/create-activity";
 import { For } from "../shared/components/For";
+import { Card, CardContent, CardHeader, CardTitle, Spinner } from "@/components/ui";
+import { Mail, Phone, QrCode, User } from "lucide-react";
 
 export default function Details() {
     const { pqrd_id } = useParams();
@@ -55,7 +55,7 @@ export default function Details() {
     };
 
     return (
-        <div className="px-4 md:pt-6">
+        <Fragment>
             <Header
                 title="Visor de PQRS"
                 subItem="Detalles"
@@ -65,94 +65,108 @@ export default function Details() {
                 <CreateActivityModal show={showCreateActivityModal} onClose={() => setShowCreateActivityModal(false)} pqrd_id={pqrd_id!} onActivityCreated={onActivityCreated} />
             </Show>
 
-            <Show when={!loading} fallback={
-                <div className="flex justify-center items-center h-full">
-                    <div className="loading loading-spinner"></div>
-                </div>
-            }>
-                {pqr && (
-
-                    <div className="flex justify-center items-center h-full gap-4">
-                        <Card className="w-1/2">
-                            <CardBody>
-                                <div className="overflow-x-auto min-h-[calc(100vh-20rem)] max-h-[calc(100vh-20rem)]">
-                                    <h1 className="text-lg font-bold text-blue-700 mb-4">Detalle PQRD: # {pqr.num_rad}</h1>
-
-                                    <div className="mt-2 p-2 card bg-blue-100 border border-blue-200 w-full">
-                                        <div className="font-semibold text-blue-800 mb-1.5">
-                                            Información del Afectado
-                                        </div>
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-1.5">
-                                                <IconUser className="size-3 text-gray-600" />
-                                                <span className="truncate">{pqr.person_name} {pqr.person_last_name}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <IconBarcode className="size-3 text-gray-600" />
-                                                <span>{formatDocument(pqr.person_document_type)} {pqr.person_document_number}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <IconPhone className="size-3 text-gray-600" />
-                                                <span>{pqr.person_phone || 'N/A'}</span>
-                                            </div>
-
-                                            <div className="flex items-center gap-1.5">
-                                                <IconMail className="size-3 text-gray-600" />
-                                                <span>{pqr.person_email || 'N/A'}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-2 p-2 card bg-blue-100 border border-blue-200 w-full">
-                                        <div className="font-semibold text-blue-800 mb-1.5">
-                                            Información de la PQRD
-                                        </div>
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-1.5">
-                                                <span>{pqr.pqr_description}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+            <div className="flex flex-1 flex-col">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-3">
+                        <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 mt-2">
+                            <Show when={!loading} fallback={
+                                <div className="flex justify-center items-center h-full">
+                                    <Spinner />
                                 </div>
-                            </CardBody>
-                        </Card>
+                            }>
+                                {pqr && (
 
-                        <Card className="w-1/2">
-                            <CardBody>
-                                <h1 className="text-lg font-semibold text-blue-700 mb-4">Actividades</h1>
+                                    <div className="flex justify-center items-center min-h-[calc(100vh-20rem)] gap-4">
+                                        <Card className="w-1/2 min-h-[calc(100vh-20rem)] max-h-[calc(100vh-20rem)]">
+                                            <CardHeader>
+                                                <CardTitle>
+                                                    Detalle PQRD # {pqr.num_rad}
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <div className="overflow-x-auto">
+                                                    <Card className="bg-blue-100 border border-blue-200 w-full">
+                                                        <CardHeader>
+                                                            <CardTitle>
+                                                                Información del Afectado
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent className="flex flex-col gap-2">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <User />
+                                                                <span className="truncate">{pqr.person_name} {pqr.person_last_name}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <QrCode />
+                                                                <span>{formatDocument(pqr.person_document_type)} {pqr.person_document_number}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Phone />
+                                                                <span>{pqr.person_phone || 'N/A'}</span>
+                                                            </div>
 
-                                <div className="overflow-x-auto min-h-[calc(100vh-28rem)] max-h-[calc(100vh-28rem)]">
-                                    <div className="bg-blue-100 border border-blue-200 shadow flex justify-between items-center p-4 rounded-lg w-full">
-                                        <div className="flex flex-col items-start gap-1.5 w-full text-gray-600">
-                                            <span className="text-sm font-semibold">{formatPQRDDate(pqr.created_at)} {formatPQRDTime(pqr.created_at)}</span>
-                                        </div>
-                                        <p className="w-full text-center font-semibold text-gray-600">Radicación de la PQRD</p>
-                                    </div>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Mail />
+                                                                <span>{pqr.person_email || 'N/A'}</span>
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
 
-                                    <For each={activities}>
-                                        {activity => (
-                                            <div className="bg-blue-100 border border-blue-200 shadow flex justify-between items-center p-4 rounded-lg w-full mt-5">
-                                                <div className="flex flex-col items-start gap-1.5 w-full text-gray-600">
-                                                    <span className="text-sm font-semibold">{formatPQRDDate(activity.createdAt)} {formatPQRDTime(activity.createdAt)}</span>
+                                                    <Card className="mt-2 bg-blue-100 border border-blue-200 w-full">
+                                                        <CardHeader>
+                                                            <CardTitle>
+                                                                Información de la PQRD
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent>
+                                                            <p>{pqr.pqr_description}</p>
+                                                        </CardContent>
+                                                    </Card>
                                                 </div>
-                                                <p className="w-full text-center font-semibold text-gray-600">{activity.activities?.description}</p>
-                                            </div>
-                                        )}
-                                    </For>
-                                </div>
+                                            </CardContent>
+                                        </Card>
 
-                                <div className="flex mt-4 justify-center">
-                                    <Button variant="primary" className="rounded-lg border border-blue-200" onClick={() => setShowCreateActivityModal(true)}>
-                                        Agregar Actividad
-                                    </Button>
-                                </div>
-                            </CardBody>
-                        </Card>
+                                        <Card className="w-1/2 h-full min-h-full">
+                                            <CardHeader>
+                                                <CardTitle>
+                                                    Actividades
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <div className="overflow-x-auto">
+                                                    <div className="bg-blue-100 border border-blue-200 shadow flex justify-between items-center p-4 rounded-lg w-full">
+                                                        <div className="flex flex-col items-start gap-1.5 w-full text-gray-600">
+                                                            <span className="text-sm font-semibold">{formatPQRDDate(pqr.created_at)} {formatPQRDTime(pqr.created_at)}</span>
+                                                        </div>
+                                                        <p className="w-full text-center font-semibold text-gray-600">Radicación de la PQRD</p>
+                                                    </div>
+
+                                                    <For each={activities}>
+                                                        {activity => (
+                                                            <div className="bg-blue-100 border border-blue-200 shadow flex justify-between items-center p-4 rounded-lg w-full mt-5">
+                                                                <div className="flex flex-col items-start gap-1.5 w-full text-gray-600">
+                                                                    <span className="text-sm font-semibold">{formatPQRDDate(activity.createdAt)} {formatPQRDTime(activity.createdAt)}</span>
+                                                                </div>
+                                                                <p className="w-full text-center font-semibold text-gray-600">{activity.activities?.description}</p>
+                                                            </div>
+                                                        )}
+                                                    </For>
+                                                </div>
+
+                                                <div className="flex mt-4 justify-center">
+                                                    <Button className="border border-blue-200 bg-blue-500 text-white hover:bg-blue-500/5 hover:text-blue-500 transition-colors duration-300 py-2 px-4 rounded-lg" onClick={() => setShowCreateActivityModal(true)}>
+                                                        Agregar Actividad
+                                                    </Button>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                )}
+                            </Show>
+                        </div>
                     </div>
-                )}
-            </Show>
-
-
-        </div>
+                </div>
+            </div>
+        </Fragment>
     );
 }

@@ -2,7 +2,7 @@ import type { iCategoryModel } from "@/entities/CategoryModel";
 import type { iModel } from "@/entities/Model";
 import type { PaginatedData } from "@/entities/PaginateData";
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
-import { instance } from "@/utils/axios.ts";
+
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";

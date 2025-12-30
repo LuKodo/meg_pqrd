@@ -1,8 +1,7 @@
 import { PaginatedData, Product } from "@/entities";
 import { ProductRepository } from "@/features/shared/repositories";
 import { FilterDto } from "@/utils";
-import { httpClient } from "@/http";
-import { FC, useEffect, useState } from "react"
+import { FC, useEffect, useState, useMemo } from "react"
 import { toast } from "sonner";
 import { Tooltip } from "../Common/TooltipComponent";
 import { Pagination } from "../../../features/shared/components/Pagination";
@@ -29,12 +28,7 @@ export const ProductSearchModal: FC<ProductSearchModalProps> = ({ show, handleCl
     const [searchField, setSearchField] = useState<string>("code");
     const [searchParam, setSearchParam] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-
-    useEffect(() => {
-        fetchProducts();
-    }, [page]);
-
-    const productRepository = new ProductRepository(httpClient);
+    const productRepository = useMemo(() => new ProductRepository(), []);
 
     const fetchProducts = async () => {
         if (searchParam === '') {
@@ -48,9 +42,15 @@ export const ProductSearchModal: FC<ProductSearchModalProps> = ({ show, handleCl
             operator: "like"
         }
         filters.push(filter);
-        const products = await productRepository.getProductByParam(filters, page, 10);
-        setProducts(products);
+        const productsResponse = await productRepository.getProductByParam(filters, page, 10);
+        setProducts(productsResponse);
     };
+
+    useEffect(() => {
+        if (show && searchParam !== null && searchParam !== '') {
+            fetchProducts();
+        }
+    }, [page, productRepository]);
 
     useEffect(() => {
         setSearchField("code");

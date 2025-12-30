@@ -1,7 +1,7 @@
-import { FilterDto, URLBuilder } from "@/utils";
-import { PaginatedData } from "@/entities/PaginateData";
-import { Product } from "@/entities/Product";
-import { Balance } from "@/entities/Balance";
+import { type FilterDto, URLBuilder } from "@/utils";
+import { type PaginatedData } from "@/entities/PaginateData";
+import { type Product } from "@/entities/Product";
+import { type Balance } from "@/entities/Balance";
 import { api } from "@/http";
 
 export class ProductRepository {

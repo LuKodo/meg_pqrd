@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Affiliate, searchAffiliate } from "@/entities";
 import { toast } from "sonner";
 import { AffiliateHttpRepository } from "../repositories";
-import { httpClient } from "@/http";
 
 
 export const useAffiliate = (params: searchAffiliate | null) => {
@@ -10,7 +9,7 @@ export const useAffiliate = (params: searchAffiliate | null) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const repository = new AffiliateHttpRepository(httpClient);
+  const repository = useMemo(() => new AffiliateHttpRepository(), []);
 
   useEffect(() => {
     if (params === null) return;
@@ -33,7 +32,7 @@ export const useAffiliate = (params: searchAffiliate | null) => {
     };
 
     if (params) fetchAffiliate();
-  }, [params]);
+  }, [params, repository]);
 
   return { affiliate, loading, error };
 };

@@ -1,9 +1,10 @@
 import React, { useState, ChangeEvent, useEffect, Fragment, useRef } from 'react';
 import JSZip from 'jszip';
-import { instance } from "@/utils";
+import { api } from "@/http";
 import Swal from "sweetalert2";
 import { Col, Row } from '@/features/shared/components/Grid';
 import { Card, CardBody } from '@/features/shared/components/Card';
+import { LoadingAll } from '../Common/LoadingAll';
 
 
 interface ExtractedFile {
@@ -102,8 +103,8 @@ const UnzipComponent: React.FC<UnzipComponentProps> = ({ type }) => {
 
     const validateRequest = async (request: string) => {
         try {
-            const res = await instance.get(`request/search?id=${request}&page=1&perPage=1`)
-            return res.data.data.length > 0;
+            const res = await api.get<{ data: any }>(`request/search?id=${request}&page=1&perPage=1`).json()
+            return res.data.length > 0;
         } catch (error: any) {
             console.error('Error validating the request:', error);
             return false
@@ -178,7 +179,7 @@ const UnzipComponent: React.FC<UnzipComponentProps> = ({ type }) => {
                                         onChange={handleFileChange}
                                     />
                                 </div>
-                                {loading && <Spinner animation="border" />}
+                                {loading && <LoadingAll />}
                             </div>
                         </CardBody>
                     </Card>

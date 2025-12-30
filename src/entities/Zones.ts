@@ -1,4 +1,4 @@
-import { iCity } from "./Location";
+import { type iCity } from "./Location";
 
 export interface Zone {
     id: number;

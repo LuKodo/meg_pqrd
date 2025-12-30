@@ -2,7 +2,6 @@ import { ControllerRenderProps } from "react-hook-form";
 import { FC, Suspense, use, useState } from "react";
 import { iRequestOne, iDepartment, iCity } from "@/entities";
 import { LocationRepository } from "@/features/shared/repositories";
-import { httpClient } from "@/http";
 import { Typeahead } from "@/features/shared/components/Typeahead";
 import { Col, Row } from "@/features/shared/components/Grid";
 
@@ -29,7 +28,7 @@ const ErrorMessage: FC<ErrorMessageProps> = ({ show }) => {
   );
 };
 
-const locationRepository = new LocationRepository(httpClient);
+const locationRepository = new LocationRepository();
 const departmentsPromise = locationRepository.getAllDep();
 const citiesPromiseCache = new Map<number, Promise<any>>();
 

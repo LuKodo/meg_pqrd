@@ -16,7 +16,6 @@ import {
 	StatusPQRS
 } from "@/utils";
 import { RequestApiRepository } from "@/features/shared/repositories";
-import { httpClient } from "@/http";
 import { Button } from "@/features/shared/components/Button";
 import { Header } from "@/features/shared/components/Header";
 import { Card, CardBody } from "@/features/shared/components/Card";
@@ -247,7 +246,7 @@ const Historic = () => {
 					<PdfViewer
 						show={seePDF}
 						onClose={handlePdfClose}
-						
+						request={selectedReq}
 						fileUrl={selectedReq.url_attachment}
 					/>
 					<EditModal

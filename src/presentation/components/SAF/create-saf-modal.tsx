@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 import { PaginatedData } from "@/entities/PaginateData";
@@ -7,6 +6,7 @@ import { iCity, iDepartment } from "@/entities/Location";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -33,15 +33,13 @@ export const ModalCreateSAF: FC<modalProps> = ({ show, handleClose }) => {
 
 	useEffect(() => {
 		department &&
-			instance.get(`city/department?id=${department}`).then((response: any) => {
+			api.get(`city/department?id=${department}`).then((response: any) => {
 				setCities(response.data);
 			});
 
-		instance
-			.get(`departaments?page=${1}&pageSize=${100000}`)
-			.then((response: any) => {
-				setDepartments(response.data);
-			});
+		api.get(`departaments?page=${1}&pageSize=${100000}`).then((response: any) => {
+			setDepartments(response.data);
+		});
 	}, [department]);
 
 	const onSubmit: SubmitHandler<{
@@ -59,8 +57,7 @@ export const ModalCreateSAF: FC<modalProps> = ({ show, handleClose }) => {
 			name: data.name,
 		};
 
-		instance
-			.post("headquarter", { json: nueva_sede })
+		api.post("headquarter", { json: nueva_sede })
 			.then(() => {
 				reset();
 				handleClose();

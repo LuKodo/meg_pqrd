@@ -1,13 +1,12 @@
 import Swal from 'sweetalert2';
 import { RequestApiRepository } from '@/features/shared/repositories';
-import { httpClient } from '@/http';
 import { DateTime } from 'luxon';
 
 export class RequestActions {
   private repository: RequestApiRepository;
 
   constructor() {
-    this.repository = new RequestApiRepository(httpClient);
+    this.repository = new RequestApiRepository();
   }
 
   async markAsScheduled(

@@ -1,4 +1,4 @@
-import { iCategoryModel } from "@/entities/CategoryModel";
+import { type iCategoryModel } from "@/entities/CategoryModel";
 
 export interface iModel {
   createdAt?: Date;

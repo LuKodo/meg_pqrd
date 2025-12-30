@@ -3,10 +3,10 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 import type { iCategoryModel } from "@/entities/CategoryModel";
-import { instance } from "@/utils/axios.ts";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -22,7 +22,7 @@ export const ModalCreateCategory: FC<modalProps> = ({ show, handleClose }) => {
 	} = useForm<iCategoryModel>();
 
 	const onSubmit: SubmitHandler<iCategoryModel> = (data) => {
-		instance
+		api
 			.post("category_model", { json: data })
 			.then(() => {
 				reset();

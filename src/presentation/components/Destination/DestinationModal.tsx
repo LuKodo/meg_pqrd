@@ -1,10 +1,10 @@
 import { Dispatch, FC, SetStateAction } from "react";
-import { instance } from "@/utils";
 import { SAFCleanInput } from "@/presentation/components";
 import { toast } from "sonner";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
   id: number;
@@ -28,7 +28,7 @@ export const DestinationModal: FC<modalProps> = ({
   const saveToDB = () => {
     origin &&
       destination &&
-      instance
+      api
         .put(
           `city/destination?id=${id}`,
           {json: JSON.stringify({ origin: origin, destination: destination })}

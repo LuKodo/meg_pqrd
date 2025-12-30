@@ -1,14 +1,13 @@
-import { IconTrafficLights } from "@/svg";
 import { usePQRS } from "./hooks/usePQRS";
 import { Header } from "@/features/shared/components/Header";
-import { Button } from "@/features/shared/components/Button";
 import { TablePQRD } from "./components/table-pqrd";
 import { CreatePQRDModal } from "./components/create-pqrd-modal";
 import { UploadPQRDModal } from "./components/upload-pqrd-modal";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { iPQRD } from "./pqrd.model";
 import { Pagination } from "@/presentation/components";
-import { Card, CardBody } from "../shared/components/Card";
+import { Button, Card, CardContent, CardFooter } from "@/components/ui";
+import { Siren } from "lucide-react";
 
 export default function GestorPQRD() {
     const [page, setPage] = useState(1);
@@ -28,48 +27,55 @@ export default function GestorPQRD() {
     };
 
     return (
-        <div className="px-4 md:px-12 md:pt-6">
+        <Fragment>
             <Header
                 title="Visor de PQRS"
                 subItem="Gestión"
                 button={
                     <div className="flex gap-2">
                         <Button
-                            size="sm"
-                            variant="primary"
+                            className="bg-blue-500 text-white rounded-2xl hover:bg-blue-500/5 hover:text-blue-500 transition-colors duration-300"
                             onClick={() => setShowCreateModal(true)}
                         >
-                            <IconTrafficLights /> Nuevo PQRD
+                            <Siren /> Nuevo PQRD
                         </Button>
                         <Button
-                            size="sm"
-                            variant="secondary"
+                            className="bg-blue-500 text-white rounded-2xl hover:bg-blue-500/5 hover:text-blue-500 transition-colors duration-300"
                             onClick={() => setShowUploadModal(true)}
                         >
-                            <IconTrafficLights /> Importar Excel
+                            <Siren /> Importar Excel
                         </Button>
                     </div >
                 }
             />
 
-            <Card>
-                <CardBody>
-                    <div className="overflow-x-auto max-h-[calc(100vh-25rem)]">
-                        <TablePQRD pqrds={pqrds.data} />
+
+            <div className="flex flex-1 flex-col">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-3">
+                        <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 mt-2">
+                            <Card>
+                                <CardContent>
+                                    <div className="overflow-x-auto max-h-[calc(100vh-15rem)]">
+                                        <TablePQRD pqrds={pqrds.data} />
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    <Pagination
+                                        pagination={{
+                                            currentPage: pqrds.currentPage,
+                                            totalPages: pqrds.totalPages,
+                                            setPage: (page) => {
+                                                setPage(page);
+                                            },
+                                        }}
+                                    />
+                                </CardFooter>
+                            </Card>
+                        </div>
                     </div>
-                </CardBody>
-				<div className="w-full p-4">
-                    <Pagination
-                        pagination={{
-                            currentPage: pqrds.currentPage,
-                            totalPages: pqrds.totalPages,
-                            setPage: (page) => {
-                                setPage(page);
-                            },
-                        }}
-                    />
                 </div>
-            </Card>
+            </div>
 
             {/* Modals */}
             <CreatePQRDModal
@@ -83,6 +89,6 @@ export default function GestorPQRD() {
                 onClose={() => setShowUploadModal(false)}
                 onUpload={handleUpload}
             />
-        </div>
+        </Fragment>
     );
 };

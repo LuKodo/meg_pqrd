@@ -1,5 +1,5 @@
 import { Observation, ObservationManage } from "@/entities/Observations";
-import { httpClient } from "@/http";
+import { api } from "@/http";
 import { PaginatedData } from "@entities";
 import { useEffect, useState } from "react";
 
@@ -17,13 +17,8 @@ export const useObservations = () => {
         setErrorMessage(null);
 
         try {
-            const observations = await httpClient.get<Observation[]>(`pqrs-observations`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-                },
-            }).json();
-            setObservations(observations);
+            const data = await api.get(`pqrs-observations`).json<Observation[]>();
+            setObservations(data);
         } catch (error: any) {
             console.error(error);
             setErrorMessage("Ocurrió un error inesperado.");
@@ -43,21 +38,15 @@ export const useObservationsManage = (role: string, page: number, limit: number)
 
     useEffect(() => {
         fetchRequestObservations();
-    }, [page, limit]);
+    }, [page, limit, role]);
 
     const fetchRequestObservations = async () => {
         setLoading(true);
         setErrorMessage(null);
 
         try {
-            const observations = await httpClient.get<PaginatedData<ObservationManage>>(`pqrs-manage/${page}/${limit}/${role}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-                },
-            }).json();
-            console.log(observations);
-            setRequestObservations(observations);
+            const data = await api.get(`pqrs-manage/${page}/${limit}/${role}`).json<PaginatedData<ObservationManage>>();
+            setRequestObservations(data);
         } catch (error: any) {
             console.error(error);
             setErrorMessage("Ocurrió un error inesperado.");
@@ -72,14 +61,10 @@ export const useObservationsManage = (role: string, page: number, limit: number)
         setErrorMessage(null);
 
         try {
-            const observations = await httpClient.put<PaginatedData<ObservationManage>>(`pqrs-manage/${observationId}/${role}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-                },
-                body: JSON.stringify(data),
-            }).json();
-            setRequestObservations(observations);
+            const updatedData = await api.put(`pqrs-manage/${observationId}/${role}`, {
+                json: data,
+            }).json<PaginatedData<ObservationManage>>();
+            setRequestObservations(updatedData);
         } catch (error: any) {
             console.error(error);
             setErrorMessage("Ocurrió un error inesperado.");

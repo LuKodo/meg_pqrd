@@ -1,6 +1,6 @@
-import { iRequest } from "./Request.ts";
-import { iStatus } from "./Status.ts";
-import { iUser } from "./User.ts";
+import { type iRequest } from "./Request.ts";
+import { type iStatus } from "./Status.ts";
+import { type iUser } from "./User.ts";
 
 export interface iLog {
   id: number;

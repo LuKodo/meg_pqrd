@@ -1,4 +1,4 @@
-import { URLBuilder, DeepPartial, BackendFilter } from "@/utils";
+import { URLBuilder, type DeepPartial, type BackendFilter } from "@/utils";
 import type {
     RequestsProps,
     RequestResponse,
@@ -7,7 +7,7 @@ import type {
     iRequest,
     iRequestView
 } from "@/entities";
-import { responseMasive } from "@/entities";
+import type { responseMasive } from "@/entities";
 import { api } from "@/http";
 
 export enum ComparisonOperator {

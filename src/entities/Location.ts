@@ -1,4 +1,4 @@
-import { iHeadquarter } from "@/entities/Headquarter";
+import { type iHeadquarter } from "@/entities/Headquarter";
 
 export interface iDepartment {
     id?: number;

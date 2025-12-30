@@ -1,8 +1,7 @@
 import { ControllerRenderProps } from "react-hook-form";
 import { iRequestOne } from "@/entities";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import { iModel } from "@/entities";
-import { httpClient } from "@/http";
 import { ModelRepository } from "@/features/shared/repositories";
 
 interface SearchInputProps {
@@ -11,25 +10,24 @@ interface SearchInputProps {
   type?: string;
 }
 
-const modelRepository = new ModelRepository(httpClient);
-const getModels = async () => {
-  return await modelRepository.getAll();
-};
-
 export const ModelInput: FC<SearchInputProps> = ({ field }) => {
   const [models, setModels] = useState<iModel[] | null>(null);
+  const modelRepository = useMemo(() => new ModelRepository(), []);
 
   useEffect(() => {
-    try {
-      getModels().then((res) => {
+    const fetchModels = async () => {
+      try {
+        const res = await modelRepository.getAll();
         setModels(
           res.filter((model: iModel) => model.categoriesId === 3)
         );
-      });
-    } catch (error: any) {
-      console.error(error);
-    }
-  }, []);
+      } catch (error: any) {
+        console.error(error);
+      }
+    };
+
+    fetchModels();
+  }, [modelRepository]);
 
   if (!models) {
     return <div className="placeholder-glow form-control bg-gray-100 rounded-lg">Cargando modelos...</div>;

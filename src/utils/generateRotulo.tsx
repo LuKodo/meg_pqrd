@@ -8,7 +8,7 @@ import {
 	Image,
 } from "@react-pdf/renderer";
 import type { FC } from "react";
-import { iRequestView } from "@/entities";
+import type { iRequestView } from "@/entities";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 
@@ -20,7 +20,7 @@ interface props {
 
 export const GenerarRotulo: FC<props> = ({ show, handleClose, info }) => {
 	return (
-		<Modal>
+		<Modal show={show} onClose={handleClose}>
 			<ModalBody className="text-center">
 				<PDFViewer width={750} height={400}>
 					<MyDocument info={info} />

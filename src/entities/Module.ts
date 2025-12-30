@@ -1,3 +1,7 @@
+import { dynamicIconImports } from "lucide-react/dynamic";
+
+type IconName = keyof typeof dynamicIconImports;
+
 export interface iModule {
   createdAt?: Date;
   updatedAt?: Date;
@@ -5,7 +9,7 @@ export interface iModule {
   name: string;
   parent: number;
   link: string;
-  icon: string;
+  icon: IconName;
   order: number;
 }
 

@@ -1,5 +1,5 @@
 import { api } from "@/http";
-import { iIPS, PaginatedData } from "@/entities";
+import { type iIPS, type PaginatedData } from "@/entities";
 
 export class IpsRepository {
     constructor() { }

@@ -1,4 +1,4 @@
-import { iReasonsRequest } from "@/entities/Request";
+import { type iReasonsRequest } from "@/entities/Request";
 import { api } from "@/http";
 
 export class ReasonStatusChangesRepository {

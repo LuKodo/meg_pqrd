@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { instance } from "@/utils";
+import { api } from "@/http";
 import { SAFCleanInput } from "../SAF";
 import { Toast } from "../Common/ToastComponent";
 import { Col, Row } from "@/features/shared/components/Grid";
@@ -20,7 +20,7 @@ export const DestinationCreateModal: FC<modalProps> = ({
   const saveToDB = () => {
     origin &&
       destination &&
-      instance
+      api
         .post(
           "city/destination",
           { json: JSON.stringify({ originId: origin, destinationId: destination }) }

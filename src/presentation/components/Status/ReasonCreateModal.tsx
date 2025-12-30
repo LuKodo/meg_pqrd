@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
@@ -10,6 +9,7 @@ import { iStatus } from "@/entities/Status";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -26,13 +26,13 @@ export const ModalCreateReason: FC<modalProps> = ({ show, handleClose }) => {
 	} = useForm<iReason>();
 
 	useEffect(() => {
-		instance.get(`status?page=${1}&pageSize=${999999}`).then((response: any) => {
+		api.get(`status?page=${1}&pageSize=${999999}`).then((response: any) => {
 			setStatuses(response.data);
 		});
 	}, []);
 
 	const onSubmit: SubmitHandler<iModel> = (data) => {
-		instance
+		api
 			.post("ReasonsRequest", { json: data })
 			.then(() => {
 				reset();

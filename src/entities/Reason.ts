@@ -1,4 +1,4 @@
-import { iStatus } from "./Status.ts";
+import { type iStatus } from "./Status.ts";
 
 export interface iReason {
   createdAt?: Date;

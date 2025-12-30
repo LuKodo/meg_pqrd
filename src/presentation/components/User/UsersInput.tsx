@@ -1,6 +1,5 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState, useMemo } from "react";
 import { iUser } from "@/entities";
-import { httpClient } from "@/http";
 import { UserRepository } from "@/features/shared/repositories";
 
 type RegionProps = {
@@ -17,7 +16,7 @@ const UsersInput: FC<RegionProps> = ({
 	className = "",
 }) => {
 	const [users, setUsers] = useState<iUser[]>([]);
-	const userRepository = new UserRepository(httpClient);
+	const userRepository = useMemo(() => new UserRepository(), []);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -27,7 +26,7 @@ const UsersInput: FC<RegionProps> = ({
 		};
 
 		fetchData();
-	}, []);
+	}, [userRepository]);
 
 	return (
 		<>

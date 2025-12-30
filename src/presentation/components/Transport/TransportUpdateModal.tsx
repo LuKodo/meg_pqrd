@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { iTransport } from "@/entities/Transport";
-import { instance } from "@/utils/axios.ts";
+
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 import { Modal, ModalBody, ModalHeader, ModalTitle } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
@@ -27,7 +27,7 @@ export const ModalTransportEdit: FC<modalProps> = ({
 
 	const saveToDB = async () => {
 		await instance
-			.put("transport", {json:userSelected})
+			.put("transport", { json: userSelected })
 			.then(() => {
 				handleClose();
 				Toast.fire({

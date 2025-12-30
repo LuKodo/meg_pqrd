@@ -1,5 +1,4 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
 import Swal from "sweetalert2";
 
 import { iRole } from "@/entities/Role";
@@ -7,6 +6,7 @@ import { role_module_role } from "@/entities/RoleModule";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -48,7 +48,7 @@ export const ModalRole: FC<modalProps> = ({
 			if (result.isConfirmed) {
 				if (modules) {
 					modules.forEach(async (obj) => {
-						await instance.put("roles_module", {
+						await api.put("roles_module", {
 							json: {
 								role: { id: selected?.id, name: selected.name },
 								module: { id: obj.module.id },
@@ -65,11 +65,9 @@ export const ModalRole: FC<modalProps> = ({
 
 	useEffect(() => {
 		selected &&
-			instance
-				.get(`roles_module/byRole?roleId=${selected.id}`)
-				.then((response: any) => {
-					setModules(response.data);
-				});
+			api.get(`roles_module/byRole?roleId=${selected.id}`).then((response: any) => {
+				setModules(response.data);
+			});
 	}, [selected]);
 
 	return (

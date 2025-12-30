@@ -3,8 +3,8 @@ import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 
 import Swal from "sweetalert2";
-import { instance } from "@/utils/axios.ts";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -24,7 +24,7 @@ export const ModalCreateRole: FC<modalProps> = ({ show, handleClose }) => {
 			cancelButtonText: "No",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				instance.post("roles", { json: { name: name } });
+				api.post("roles", { json: { name: name } });
 			}
 			handleClose();
 		});

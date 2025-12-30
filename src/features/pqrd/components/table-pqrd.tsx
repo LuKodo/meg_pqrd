@@ -5,6 +5,8 @@ import { IconBarcode, IconMail, IconPhone, IconTrafficLights, IconUser } from "@
 import { Button } from "@/features/shared/components/Button";
 import { IconEye } from "@/svg/eye";
 import { useLocation } from "wouter";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
+import { Siren } from "lucide-react";
 
 interface TablePQRDProps {
     pqrds: any[];
@@ -14,59 +16,59 @@ export const TablePQRD = ({ pqrds }: TablePQRDProps) => {
     const [_location, navigate] = useLocation();
 
     return (
-        <table className="table table-xs table-pin-rows">
-            <thead>
-                <tr>
-                    <th className="min-w-32">Radicado</th>
-                    <th className="min-w-32">Mutual</th>
-                    <th className="min-w-32">Fecha</th>
-                    <th className="min-w-80">Peticionario / Afectado</th>
-                    <th className="min-w-32">Canal</th>
-                    <th className="min-w-80">Proceso / Asunto</th>
-                    <th className="min-w-32">Asignado</th>
-                    <th className="min-w-32">Vencimiento</th>
-                    <th className="min-w-32">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="min-w-32">Radicado</TableHead>
+                    <TableHead className="min-w-32">Mutual</TableHead>
+                    <TableHead className="min-w-32">Fecha</TableHead>
+                    <TableHead className="min-w-80">Peticionario / Afectado</TableHead>
+                    <TableHead className="min-w-32">Canal</TableHead>
+                    <TableHead className="min-w-80">Proceso / Asunto</TableHead>
+                    <TableHead className="min-w-32">Asignado</TableHead>
+                    <TableHead className="min-w-32">Vencimiento</TableHead>
+                    <TableHead className="min-w-32">Acciones</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
                 <Show when={pqrds.length > 0} fallback={
-                    <tr>
-                        <td colSpan={8} className="text-center py-8 text-gray-500">
+                    <TableRow>
+                        <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                             No hay PQRS registrados
-                        </td>
-                    </tr>
+                        </TableCell>
+                    </TableRow>
                 }>
                     <For each={pqrds}>
                         {(pqr: any) => {
                             const Icon = channelToIcon(pqr.channel);
 
                             return (
-                                <tr className="hover:bg-gray-50 transition-colors">
+                                <TableRow className="hover:bg-gray-50 transition-colors">
                                     {/* Radicado Interno */}
-                                    <td className="w-32">
+                                    <TableCell>
                                         <div className="flex flex-col gap-1">
                                             <span className="font-semibold text-sm">{pqr.num_rad}</span>
                                             <span className={`badge badge-sm ${pqr.status ? 'badge-primary' : 'badge-neutral'}`}>
                                                 {pqr.status ? "Abierto" : "Cerrado"}
                                             </span>
                                         </div>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Radicado Mutual */}
-                                    <td className="w-32">
+                                    <TableCell>
                                         <span className="text-sm">{pqr.mutual_radicado || 'N/A'}</span>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Fecha */}
-                                    <td className="w-32">
+                                    <TableCell>
                                         <div className="flex flex-col gap-0.5 text-xs">
                                             <span className="font-medium">{formatPQRDDate(pqr.created_at)}</span>
                                             <span className="text-gray-500">{formatPQRDTime(pqr.created_at)}</span>
                                         </div>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Peticionario / Afectado */}
-                                    <td className="w-80">
+                                    <TableCell>
                                         <div className="flex flex-col gap-2">
                                             {/* Afectado */}
                                             <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
@@ -117,59 +119,57 @@ export const TablePQRD = ({ pqrds }: TablePQRDProps) => {
                                                 </div>
                                             )}
                                         </div>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Canal */}
-                                    <td className="w-32">
-                                        <Button variant="info" size="xl">
+                                    <TableCell>
+                                        <Button className="flex items-center gap-1.5" size="xl">
                                             <Icon className="size-4" />
                                             <span className="text-xs">{pqr.channel}</span>
                                         </Button>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Proceso / Asunto */}
-                                    <td className="w-96">
+                                    <TableCell>
                                         <div className="bg-gray-50 rounded-lg p-2.5 border border-gray-200 group">
                                             <div className="text-xs font-semibold text-gray-700 mb-1.5">
                                                 {pqr.pqr_type}
                                             </div>
-                                            <p className="text-xs text-gray-600 line-clamp-3 group-hover:line-clamp-none transition-all">
-                                                {pqr.pqr_description}
-                                            </p>
+                                            <textarea className="text-gray-600 w-96 h-24" defaultValue={pqr.pqr_description} />
                                         </div>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Asignado */}
-                                    <td className="w-32">
+                                    <TableCell>
                                         <span className="text-sm">{(pqr.assignment?.[0])?.users?.username || 'Sin asignar'}</span>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Vencimiento */}
-                                    <td className="w-40">
+                                    <TableCell>
                                         <div className="flex items-center gap-2">
                                             <div className={`${semaforoToColor(pqr.created_at, pqr.end_date)} text-white p-2 rounded-lg`}>
-                                                <IconTrafficLights className="size-5" />
+                                                <Siren className="size-5" />
                                             </div>
                                             <div className="flex flex-col gap-0.5 text-xs">
                                                 <span className="font-medium">{formatPQRDDate(pqr.end_date)}</span>
                                                 <span className="text-gray-500">{formatPQRDTime(pqr.end_date)}</span>
                                             </div>
                                         </div>
-                                    </td>
+                                    </TableCell>
 
                                     {/* Acciones */}
-                                    <td className="w-40">
-                                        <Button variant="info" onClick={() => navigate(`/home/gestor/${pqr.id}`)}>
+                                    <TableCell>
+                                        <Button className="bg-blue-500 text-white rounded-2xl hover:bg-blue-500/5 hover:text-blue-500 transition-colors duration-300 w-24 flex items-center gap-1 py-2 justify-center" onClick={() => navigate(`/home/gestor/${pqr.id}`)}>
                                             <IconEye className="size-4" />
                                             <span className="text-xs">Ver</span>
                                         </Button>
-                                    </td>
-                                </tr>
+                                    </TableCell>
+                                </TableRow>
                             )
                         }}
                     </For>
                 </Show>
-            </tbody>
-        </table>
+            </TableBody>
+        </Table>
     )
 }

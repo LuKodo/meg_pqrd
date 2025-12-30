@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { FC } from "react";
 import type { Dispatch } from "react";
 import type { SetStateAction } from "react";
 import { requestStatePQRSMachine, StatusPQRS } from "@/utils";
 import type { iReasonsRequest } from "@/entities";
-import { httpClient } from "@/http";
 import { ReasonStatusChangesRepository } from "@/features/shared/repositories";
 
 interface DeliveryFailedReasonsProps {
@@ -12,30 +11,28 @@ interface DeliveryFailedReasonsProps {
 	setSelected: Dispatch<SetStateAction<string | undefined>>;
 }
 
-const repository = new ReasonStatusChangesRepository(httpClient);
-
 const DeliveryFailedReasons: FC<DeliveryFailedReasonsProps> = ({
 	selected,
 	setSelected,
 }) => {
 	const [data, setData] = useState<iReasonsRequest[]>([]);
+	const repository = useMemo(() => new ReasonStatusChangesRepository(), []);
 
 	useEffect(() => {
-		const fetchUser = async () => {
+		const fetchReasons = async () => {
 			const reasons = await repository.getByStatus(requestStatePQRSMachine.getStateId(StatusPQRS.Devolucion));
 			setData(reasons);
 		};
 
-		fetchUser();
-	}, []);
+		fetchReasons();
+	}, [repository]);
 
 	return (
-		<select id="reasons" onChange={(e) => setSelected(e.target.value)}>
+		<select id="reasons" onChange={(e) => setSelected(e.target.value)} value={selected} className="select">
 			<option value="0" />
 			{data?.map((reason) => {
 				return (
 					<option
-						selected={selected === reason.description}
 						value={reason.description}
 						key={reason.id}
 					>

@@ -1,10 +1,10 @@
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, useMemo } from "react";
 import { UseFormSetValue, UseFormWatch, SubmitHandler } from "react-hook-form";
 import { DateTime } from "luxon";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { Product, iModel, iRequestOne } from "@/entities";
-import { httpClient } from "@/http";
+import { api } from "@/http";
 import { RequestApiRepository } from "@/features/shared/repositories";
 import { RequestActions } from "@/services/index.ts";
 import { useSessionManager } from "@/features/shared/hooks/useSessionManager";
@@ -13,15 +13,13 @@ const uploadImageOCI = async (name: string, file: File): Promise<boolean> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    return await httpClient.post(`files/upload?type=formulas&name=${name}`, { body: formData })
-        .then((response: any) => {
-            console.log('Archivo subido exitosamente:', response.data);
-            return true;
-        })
-        .catch((error: any) => {
-            console.error('Error al subir el archivo:', error);
-            return false;
-        })
+    try {
+        await api.post(`files/upload?type=formulas&name=${name}`, { body: formData }).json();
+        return true;
+    } catch (error: any) {
+        console.error('Error al subir el archivo:', error);
+        return false;
+    }
 }
 
 interface UseRequestPQRSProps {
@@ -32,8 +30,8 @@ interface UseRequestPQRSProps {
 
 export const useRequestPQRS = ({ setValue, watch, navigate }: UseRequestPQRSProps) => {
     const { userData } = useSessionManager();
-    const repository = new RequestApiRepository(httpClient);
-    const requestActions = new RequestActions();
+    const repository = useMemo(() => new RequestApiRepository(), []);
+    const requestActions = useMemo(() => new RequestActions(), []);
 
     const [loading, setLoading] = useState(false);
     const [productModal, setProductModal] = useState(false);

@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { instance } from "@/utils/axios.ts";
+
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 
 import { iHeadquarter } from "@/entities/Headquarter";
@@ -45,7 +45,7 @@ export const ModalUpdateSAF: FC<modalProps> = ({
 
 	const onSubmit = async () => {
 		await instance
-			.put("headquarter", {json: sedeSelected})
+			.put("headquarter", { json: sedeSelected })
 			.then(() => {
 				handleClose();
 				Toast.fire({

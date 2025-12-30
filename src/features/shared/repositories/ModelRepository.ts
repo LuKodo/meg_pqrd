@@ -1,4 +1,4 @@
-import { iModel } from "@/entities";
+import { type iModel } from "@/entities";
 import { api } from "@/http";
 
 export class ModelRepository {

@@ -1,7 +1,7 @@
 import { Button } from "@/features/shared/components/Button";
 import { Col } from "@/features/shared/components/Grid";
 import { Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle } from "@/features/shared/components/Modal";
-import { httpClient } from "@/http";
+import { api } from "@/http";
 import { FC, useState } from "react";
 
 interface ConfirmBuyModalProps {
@@ -26,18 +26,14 @@ export const ConfirmBuyModal: FC<ConfirmBuyModalProps> = ({
         }
 
         try {
-            const response = await httpClient.put(`pqrs-manage/${observationId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-                },
-                body: JSON.stringify({
+            const response = await api.put(`pqrs-manage/${observationId}`, {
+                json: {
                     destination: {
                         id: 1 //Compra realizada
                     },
                     buyed: true,
                     observation: odc
-                }),
+                },
             }).json();
 
             if (response) {
@@ -59,7 +55,6 @@ export const ConfirmBuyModal: FC<ConfirmBuyModalProps> = ({
             </ModalHeader>
             <ModalBody>
                 <label htmlFor="observation-select">Número de ODC</label>
-
                 <input type="text" id="observation-select" value={odc} onChange={(e) => setOdc(e.target.value)} className="form-control" />
             </ModalBody>
             <ModalFooter>

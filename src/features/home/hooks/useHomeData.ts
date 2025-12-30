@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSessionManager } from "@/features/shared/hooks/useSessionManager";
 import type { iRequestView } from "@/entities";
 import { RequestApiRepository } from "@/features/shared/repositories";
-import { httpClient } from "@/http";
-
 
 export const useHomeData = () => {
     const { userData } = useSessionManager();
     const [requests, setRequests] = useState<iRequestView[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const requestRepository = new RequestApiRepository(httpClient);
+    const requestRepository = useMemo(() => new RequestApiRepository(), []);
     const username = userData?.username;
 
     useEffect(() => {

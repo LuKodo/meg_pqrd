@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from "react";
 import { PaginatedData } from "@/entities/PaginateData";
-import { instance } from "@/utils/axios.ts";
 import { Toast } from "@/presentation/components/Common/ToastComponent.tsx";
 
 import { iModel } from "@/entities/Model";
@@ -8,6 +7,7 @@ import { iCategoryModel } from "@/entities/CategoryModel";
 import { Modal, ModalBody } from "@/features/shared/components/Modal";
 import { Col, Row } from "@/features/shared/components/Grid";
 import { Button } from "@/features/shared/components/Button";
+import { api } from "@/http";
 
 interface modalProps {
 	show: boolean;
@@ -25,7 +25,7 @@ export const ModalUpdateModel: FC<modalProps> = ({
 	const [sedeSelected, setSedeSelected] = useState<iModel | undefined>();
 
 	useEffect(() => {
-		instance.get(`category_model?page=${1}&pageSize=${999999}`)
+		api.get(`category_model?page=${1}&pageSize=${999999}`)
 			.then(async (response) => {
 				setCategoryModels(await response.json());
 			});
@@ -36,8 +36,7 @@ export const ModalUpdateModel: FC<modalProps> = ({
 	}, [selected]);
 
 	const onSubmit = async () => {
-		await instance
-			.put("model", { json: sedeSelected })
+		await api.put("model", { json: sedeSelected })
 			.then(() => {
 				handleClose();
 				Toast.fire({

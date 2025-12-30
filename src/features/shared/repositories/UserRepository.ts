@@ -1,4 +1,4 @@
-import { iUser } from "@/entities";
+import type { iUser } from "@/entities";
 import { api } from "@/http";
 
 export class UserRepository {
